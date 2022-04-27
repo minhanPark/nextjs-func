@@ -62,3 +62,33 @@ return (
 ```
 
 리액트에서 제공하는 suspense를 활용하려면 위와 같이 동적 import시 suspense 속성의 값을 true로 설정해주어야 한다.
+
+## \_document.tsx 와 폰트
+
+\_document.tsx는 페이지 렌더링 시 html과 head, body 태그의 청사진을 그릴 수 있다. 서버에서 한번 렌더링이 된다. 여기에 구글 폰트 등을 삽입해주면 된다. 또한 next는 빌드 시에 구글 폰트를 바로 코드로 넣어주기 때문에 사용자는 \_document.tsx에서 한번 코드를 읽은 후 그 다음부터는 바로 사용가능하게 된다.
+
+```
+import Document, { Head, Html, Main, NextScript } from "next/document";
+
+class CustomDocument extends Document {
+  render(): JSX.Element {
+    console.log("DOCUMENT IS RUNNING");
+    return (
+      <Html lang="ko">
+        <Head>
+          <link
+            href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap"
+            rel="stylesheet"
+          />
+        </Head>
+        <body>
+          <Main />
+          <NextScript />
+        </body>
+      </Html>
+    );
+  }
+}
+
+export default CustomDocument;
+```
