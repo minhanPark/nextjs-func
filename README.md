@@ -166,3 +166,11 @@ getServerSideProps를 사용하더라도 SWR을 사용할 수 있다.(기존 캐
 ## getStaticPath
 
 동적 라우트([id.tsx] 같은 형태)를 갖는 페이지에서 getStaticProps를 사용할 때 필요하다. Next에게 정적 페이지를 어느 정도 만들어야 하는 지 알려준다.
+
+> getStaticProps는 빌드 시에 바로 static file이 된다. 그래서 이 후 수정이 불가능하다.  
+> SSG(Static Site Generation)이 됨  
+> 호출 시 마다 data fetch가 없으니 성능면에서 제일 좋음
+
+> getServerSideProps는 페이지가 요청 받을 때마다 호출되어 pre-rendering을 한다.  
+> SSR(Server Side Rendering)이다.  
+> pre-rendering이 필요한 동적데이터가 있는 페이지에서 사용하면 되고, 내용이 언제든 동적 데이터에 의해서 수정이 가능하다.
