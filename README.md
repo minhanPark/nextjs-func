@@ -92,3 +92,77 @@ class CustomDocument extends Document {
 
 export default CustomDocument;
 ```
+
+확인해보면 **\_document.tsx.는 페이지가 처음 렌더링 될 때 한번 실행하고, 그 후부터는 실행하지 않음**
+
+## Script
+
+next에서는 script도 최적화해서 사용가능하도록 해준다.
+
+```js
+import Script from "next/script";
+```
+
+위와 같이 부를 수 있음. script에는 3가지 전략을 사용할 수 있는데, beforeInteractive, afterInteractive, lazyOnload이다.
+
+> beforeInteractive는 서버에서 초기 HTML에 주입되고 자체 번들 자바스크립트가 실행되기 전에 코드를 읽는다. 페이지가 상호작용하기전에 실행되길 원한다면 해당 전략을 사용하면 된다.  
+> afterInteractive(기본값)는 클라이언트 사이드에서 삽입되고, Next.js가 하이드레이트 할 때 실행된다. 페이지가 상호작용 가능할 떄 즉시 실행된다.  
+> lazyOnload는 모든 리소스가 읽히고 난 뒤 유휴시간에 로드된다. 낮은 우선순위의 스크립트의 경우 사용하기에 좋다.
+
+```js
+<Script src="src" strategy="lazyOnload" />
+```
+
+또한 onLoad를 활용하면 스크립트가 로드되었을 때 바로 실행할 코드를 작성할 수 있다.
+
+```js
+<Script
+  src="https://connect.facebook.net/en_US/sdk.js"
+  onLoad={() => {
+    window.fbAsyncInit = function () {
+      FB.init({
+        appId: "your-app-id",
+        autoLogAppEvents: true,
+        xfbml: true,
+        version: "v13.0",
+      });
+    };
+  }}
+/>
+```
+
+## getServerSideProps
+
+사용자가 페이지에 들어왔을 때 로딩 화면이라도 보여주고 데이터를 보여줄 수도 있고, 조금 더 시간이 걸리더라도 데이터를 다 로드한 뒤 로딩 없이 화면을 보여줄 수 있다.  
+후자가 더 좋다고 판단했을 시에 사용하는게 getServerSideProps다
+
+```js
+<SWRConfig
+  value={{
+    fallback: {
+      "/api/products": {
+        ok: true,
+        products,
+      },
+    },
+  }}
+>
+  <Home />
+</SWRConfig>
+```
+
+getServerSideProps를 사용하더라도 SWR을 사용할 수 있다.(기존 캐시, Optimistic 적용을 위해서 SWR을 사용하는게 좋음.)  
+**fallback을 사용**하면됨
+
+## getStaticProps
+
+정적 페이지를 생성해준다.  
+정적 페이지는 **데이터의 변동이 없는 페이지를 정적 페이지라고 한다.**
+
+빌드 시에 next가 정적 페이지를 만들 수 있도록 이용가능해야하고, 데이터를 공개적으로 캐시할 수 있다. 또한 seo를 위해 미리 렌더링된다.
+
+> getServerSideProps는 요청 마다 새로 실행되지만 getStaticProps는 빌드 후 한번 요청때만 요청된다.
+
+## getStaticPath
+
+동적 라우트([id.tsx] 같은 형태)를 갖는 페이지에서 getStaticProps를 사용할 때 필요하다. Next에게 정적 페이지를 어느 정도 만들어야 하는 지 알려준다.

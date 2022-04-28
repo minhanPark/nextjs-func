@@ -3,9 +3,7 @@ import Head from "next/head";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 
-const Temp = dynamic(() => import("../components/temp"), { ssr: false });
-
-const Home: NextPage = () => {
+const Bye: NextPage = () => {
   return (
     <div>
       <Head>
@@ -14,12 +12,12 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <h1>Running Water</h1>
-      <Link href="/bye">
-        <a>바이 페이지</a>
+      <h1>Running Water Bye</h1>
+      <Link href="/">
+        <a>인덱스 페이지</a>
       </Link>
     </div>
   );
 };
 
-export default Home;
+export default Bye;
